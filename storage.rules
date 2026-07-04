@@ -1,0 +1,26 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Disease reports images folder rule
+    match /disease_reports/{userId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && request.resource.size < 10 * 1024 * 1024 && request.resource.contentType.matches('image/.*');
+    }
+
+    // Advisory voice notes folder rule
+    match /advisories/{userId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && request.resource.size < 5 * 1024 * 1024 && request.resource.contentType.matches('audio/.*');
+    }
+  }
+}
