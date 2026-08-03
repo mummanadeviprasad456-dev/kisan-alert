@@ -29,3 +29,7 @@ Thumbs.db
 # Firebase
 .firebase/
 serviceAccountKey.json
+
+# Uploads
+backend/uploads/
+
