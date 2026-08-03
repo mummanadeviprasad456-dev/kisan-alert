@@ -11,9 +11,13 @@ class LocalStorageService implements IStorageService {
   private uploadDir: string;
 
   constructor() {
-    this.uploadDir = path.join(process.cwd(), 'uploads');
+    this.uploadDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
     if (!fs.existsSync(this.uploadDir)) {
-      fs.mkdirSync(this.uploadDir, { recursive: true });
+      try {
+        fs.mkdirSync(this.uploadDir, { recursive: true });
+      } catch (err) {
+        console.warn('Failed to create upload directory:', err);
+      }
     }
   }
 

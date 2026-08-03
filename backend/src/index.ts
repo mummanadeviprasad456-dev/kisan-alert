@@ -14,7 +14,7 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // ─── Middleware ───────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || true,
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -48,14 +48,16 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 });
 
 // ─── Start Server ────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`
-  🌾 ════════════════════════════════════════════
-     Kisan Alert API Server
-     Running on http://localhost:${PORT}
-     Health: http://localhost:${PORT}/api/health
-  🌾 ════════════════════════════════════════════
-  `);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`
+    🌾 ════════════════════════════════════════════
+       Kisan Alert API Server
+       Running on http://localhost:${PORT}
+       Health: http://localhost:${PORT}/api/health
+    🌾 ════════════════════════════════════════════
+    `);
+  });
+}
 
 export default app;
